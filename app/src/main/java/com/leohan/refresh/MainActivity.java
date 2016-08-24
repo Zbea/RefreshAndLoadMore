@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @InjectView(R.id.SwipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
+
     boolean isLoading;
     private List<Map<String, Object>> data = new ArrayList<>();
     private RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, data);
