@@ -1,11 +1,10 @@
 package com.leohan.refresh;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,7 +21,7 @@ import butterknife.InjectView;
 /**
  * @author Leo
  */
-public class MainActivity extends AppCompatActivity {
+public class GridViewActivity extends AppCompatActivity {
 
 
     @InjectView(R.id.toolbar)
@@ -77,7 +76,13 @@ public class MainActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this,2);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+            return (position+1)==adapter.getItemCount()? layoutManager.getSpanCount() : 1;
+            }
+        });
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("test", "onScrolled");
 
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition + 1 == adapter.getItemCount()) {
+                if (lastVisibleItemPosition + 1 == adapter.getItemCount()&&adapter.getItemCount()>10) {
                     Log.d("test", "loading executed");
 
                     boolean isRefreshing = swipeRefreshLayout.isRefreshing();
@@ -123,12 +128,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Log.d("test", "item position = " + position);
-                startActivity(new Intent(MainActivity.this,GridViewActivity.class));
             }
 
             @Override
             public void onItemLongClick(View view, int position) {
-                startActivity(new Intent(MainActivity.this,StaggeredActivity.class));
+
             }
         });
     }
@@ -148,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
      * 获取测试数据
      */
     private void getData() {
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 10; i++) {
             Map<String, Object> map = new HashMap<>();
             data.add(map);
         }

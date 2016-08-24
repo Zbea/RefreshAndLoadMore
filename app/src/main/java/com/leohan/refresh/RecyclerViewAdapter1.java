@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class RecyclerViewAdapter extends Adapter<ViewHolder> {
+public class RecyclerViewAdapter1 extends Adapter<ViewHolder> {
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
@@ -18,7 +18,7 @@ public class RecyclerViewAdapter extends Adapter<ViewHolder> {
     private List data;
 
 
-    public RecyclerViewAdapter(Context context, List data) {
+    public RecyclerViewAdapter1(Context context, List data) {
         this.context = context;
         this.data = data;
     }
@@ -33,7 +33,6 @@ public class RecyclerViewAdapter extends Adapter<ViewHolder> {
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
-
     }
 
     @Override
@@ -47,6 +46,7 @@ public class RecyclerViewAdapter extends Adapter<ViewHolder> {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
+
         }
     }
 
@@ -68,7 +68,7 @@ public class RecyclerViewAdapter extends Adapter<ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
-            //holder.tv.setText(data.get(position));
+            ((ItemViewHolder) holder).tv.setHeight(100+position*10);
             if (onItemClickListener != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -77,6 +77,7 @@ public class RecyclerViewAdapter extends Adapter<ViewHolder> {
                         onItemClickListener.onItemClick(holder.itemView, position);
                     }
                 });
+
 
                 holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override

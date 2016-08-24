@@ -1,12 +1,11 @@
 package com.leohan.refresh;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -22,7 +21,7 @@ import butterknife.InjectView;
 /**
  * @author Leo
  */
-public class MainActivity extends AppCompatActivity {
+public class StaggeredActivity extends AppCompatActivity {
 
 
     @InjectView(R.id.toolbar)
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isLoading;
     private List<Map<String, Object>> data = new ArrayList<>();
-    private RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, data);
+    private RecyclerViewAdapter1 adapter = new RecyclerViewAdapter1(this, data);
     private Handler handler = new Handler();
 
     @Override
@@ -77,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -93,9 +93,10 @@ public class MainActivity extends AppCompatActivity {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 Log.d("test", "onScrolled");
-
-                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition + 1 == adapter.getItemCount()) {
+                //获取最后一个完全显示的ItemPosition
+                int[] lastVisiblePositions = layoutManager.findLastVisibleItemPositions(new int[layoutManager.getSpanCount()]);
+                int lastVisibleItemPosition = getMaxElem(lastVisiblePositions);
+                if (lastVisibleItemPosition + 1 == adapter.getItemCount()&&adapter.getItemCount()>10) {
                     Log.d("test", "loading executed");
 
                     boolean isRefreshing = swipeRefreshLayout.isRefreshing();
@@ -119,16 +120,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //添加点击事件
-        adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new RecyclerViewAdapter1.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Log.d("test", "item position = " + position);
-                startActivity(new Intent(MainActivity.this,GridViewActivity.class));
             }
 
             @Override
             public void onItemLongClick(View view, int position) {
-                startActivity(new Intent(MainActivity.this,StaggeredActivity.class));
+
             }
         });
     }
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
      * 获取测试数据
      */
     private void getData() {
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 10; i++) {
             Map<String, Object> map = new HashMap<>();
             data.add(map);
         }
@@ -157,5 +157,14 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyItemRemoved(adapter.getItemCount());
     }
 
+    private int getMaxElem(int[] arr) {
+        int size = arr.length;
+        int maxVal = Integer.MIN_VALUE;
+        for (int i = 0; i < size; i++) {
+            if (arr[i]>maxVal)
+                maxVal = arr[i];
+        }
+        return maxVal;
+    }
 
 }
