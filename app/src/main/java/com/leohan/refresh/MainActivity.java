@@ -3,16 +3,17 @@ package com.leohan.refresh;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+
+import com.leohan.refresh.collapsing.CollapsingActivity;
+import com.leohan.refresh.header.HeaderFooterActivity;
+import com.leohan.refresh.loadmore.RefreshAndMoreActivity;
+import com.leohan.refresh.multistyle.MultiStyleActivity;
+import com.leohan.refresh.staggeredgrid.StaggeredGridActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,19 @@ import butterknife.InjectView;
 public class MainActivity extends AppCompatActivity {
 
 
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
-    @InjectView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @InjectView(R.id.SwipeRefreshLayout)
-    SwipeRefreshLayout swipeRefreshLayout;
+
+    @InjectView(R.id.refresh_and_more)
+    Button refreshAndMore;
+    @InjectView(R.id.multi_style)
+    Button multiStyle;
+    @InjectView(R.id.header_footer)
+    Button headerAndFooter;
+    @InjectView(R.id.collapsing)
+    Button collapsing;
+    @InjectView(R.id.staggered_grid)
+    Button staggeredGrid;
+    @InjectView(R.id.easy)
+    Button easy;
 
 
     boolean isLoading;
@@ -41,121 +49,64 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notice);
+        setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         initView();
-        initData();
     }
 
-    public void initView() {
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(R.string.notice);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+    public void initView()
+    {
+
+
+        refreshAndMore.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
-                finish();
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, RefreshAndMoreActivity.class));
             }
         });
-
-        swipeRefreshLayout.setColorSchemeResources(R.color.blueStatus);
-        swipeRefreshLayout.post(new Runnable() {
+        multiStyle.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, MultiStyleActivity.class));
             }
         });
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        headerAndFooter.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onRefresh() {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        data.clear();
-                        getData();
-                    }
-                }, 2000);
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, HeaderFooterActivity.class));
             }
         });
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        collapsing.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Log.d("test", "StateChanged = " + newState);
-
-
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                Log.d("test", "onScrolled");
-
-                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition + 1 == adapter.getItemCount()) {
-                    Log.d("test", "loading executed");
-
-                    boolean isRefreshing = swipeRefreshLayout.isRefreshing();
-                    if (isRefreshing) {
-                        adapter.notifyItemRemoved(adapter.getItemCount());
-                        return;
-                    }
-                    if (!isLoading) {
-                        isLoading = true;
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                getData();
-                                Log.d("test", "load more completed");
-                                isLoading = false;
-                            }
-                        }, 1000);
-                    }
-                }
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, CollapsingActivity.class));
             }
         });
-
-        //添加点击事件
-        adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
+        staggeredGrid.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onItemClick(View view, int position) {
-                Log.d("test", "item position = " + position);
-                startActivity(new Intent(MainActivity.this,GridViewActivity.class));
-            }
-
-            @Override
-            public void onItemLongClick(View view, int position) {
-                startActivity(new Intent(MainActivity.this,StaggeredActivity.class));
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, StaggeredGridActivity.class));
             }
         });
-    }
-
-
-    public void initData() {
-        handler.postDelayed(new Runnable() {
+        easy.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void run() {
-                getData();
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, EasyRecyclerViewActivity.class));
             }
-        }, 1500);
+        });
 
     }
-
-    /**
-     * 获取测试数据
-     */
-    private void getData() {
-        for (int i = 0; i < 6; i++) {
-            Map<String, Object> map = new HashMap<>();
-            data.add(map);
-        }
-        adapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
-        adapter.notifyItemRemoved(adapter.getItemCount());
-    }
-
 
 }

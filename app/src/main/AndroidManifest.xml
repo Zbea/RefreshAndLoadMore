@@ -20,6 +20,26 @@
 
         <activity android:name=".StaggeredActivity"/>
 
+        <activity android:name=".EasyRecyclerViewActivity"/>
+
+
+        <activity
+            android:name=".loadmore.RefreshAndMoreActivity"
+            android:label="@string/refresh_and_more">
+        </activity>
+        <activity
+            android:name=".multistyle.MultiStyleActivity"
+            android:label="@string/multi_style">
+        </activity>
+        <activity android:name=".header.HeaderFooterActivity"
+                  android:label="@string/header_and_footer">
+        </activity>
+        <activity android:name=".collapsing.CollapsingActivity"
+                  android:theme="@style/AppTheme.NoActionBar"
+                  android:label="@string/collapsing"/>
+        <activity android:name=".staggeredgrid.StaggeredGridActivity"
+                  android:label="@string/staggered_grid"/>
+
     </application>
 
 </manifest>
